@@ -1,0 +1,80 @@
+
+#include "thingProperties.h"
+
+const int dotDuration = 1000; // Duration of a dot
+const int dashDuration = dotDuration * 3; // Duration of a dash
+const int symbolSpace = dotDuration; // Space between symbols (dots and dashes)
+const int letterSpace = dotDuration * 2; // Space between letters
+
+
+
+void setup() {
+  
+  Serial.begin(9600);
+  delay(1500); 
+  initProperties();
+  pinMode(LED_BUILTIN,OUTPUT);
+
+  
+  ArduinoCloud.begin(ArduinoIoTPreferredConnection);
+  
+  
+  setDebugMessageLevel(2);
+  ArduinoCloud.printDebugInfo();
+}
+
+void dot() {
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(dotDuration);
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(symbolSpace);
+}
+
+void dash() {
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(dashDuration);
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(symbolSpace);
+}
+
+
+void loop() {
+  ArduinoCloud.update();
+  // Your code here 
+//T
+  dash();
+  delay(letterSpace);
+
+  //A
+  dot(); dash();
+   delay(letterSpace);
+
+  //P
+  dot(); dash(); dash(); dot();
+  delay(letterSpace);
+
+  //U
+  dot(); dot(); dash();
+  delay(letterSpace);
+  
+  //R
+  dot(); dash(); dot();
+  delay(letterSpace);
+
+}
+
+void onLedChange()
+{
+  digitalWrite(LED_BUILTIN,led);
+ 
+}
+
+
+
+/*
+  Since Led is READ_WRITE variable, onLedChange() is
+  executed every time a new value is received from IoT Cloud.
+*/
+void onLedChange()  {
+  // Add your code here to act upon Led change
+}
