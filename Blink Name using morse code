@@ -1,80 +1,57 @@
+// Pin definitions
+const int ledPin = LED_BUILTIN;  
+const int buttonPin = 2;        
 
-#include "thingProperties.h"
+// Morse code timing
+const int dotDuration = 200;     
+const int dashDuration = 600;   
+const int intraCharGap = 200;    
+const int interCharGap = 600;    
 
-const int dotDuration = 1000; // Duration of a dot
-const int dashDuration = dotDuration * 3; // Duration of a dash
-const int symbolSpace = dotDuration; // Space between symbols (dots and dashes)
-const int letterSpace = dotDuration * 2; // Space between letters
+void setup() {// Set LED pin as output
+  pinMode(buttonPin, INPUT_PULLUP); 
 
+void loop() {
+  if (digitalRead(buttonPin) == LOW) { 
+    blinkMorse("Tapur");               
+    delay(1000);                       
+  }
+}
 
-
-void setup() {
-  
-  Serial.begin(9600);
-  delay(1500); 
-  initProperties();
-  pinMode(LED_BUILTIN,OUTPUT);
-
-  
-  ArduinoCloud.begin(ArduinoIoTPreferredConnection);
-  
-  
-  setDebugMessageLevel(2);
-  ArduinoCloud.printDebugInfo();
+void blinkMorse(const char* text) {
+  while (*text) {
+    switch (toupper(*text)) {
+      case 'T':
+        dash();
+        break;
+      case 'A':
+        dot(); dash();
+        break;
+      case 'P':
+        dot(); dash(); dash(); dot();
+        break;
+      case 'U':
+        dot(); dot(); dash();
+        break;
+      case 'R':
+        dot(); dash(); dot();
+        break;
+    }
+    delay(interCharGap);  
+    text++;               
+  }
 }
 
 void dot() {
-  digitalWrite(LED_BUILTIN, HIGH);
+  digitalWrite(ledPin, HIGH);
   delay(dotDuration);
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(symbolSpace);
+  digitalWrite(ledPin, LOW);
+  delay(intraCharGap);
 }
 
 void dash() {
-  digitalWrite(LED_BUILTIN, HIGH);
+  digitalWrite(ledPin, HIGH);
   delay(dashDuration);
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(symbolSpace);
-}
-
-
-void loop() {
-  ArduinoCloud.update();
-  // Your code here 
-//T
-  dash();
-  delay(letterSpace);
-
-  //A
-  dot(); dash();
-   delay(letterSpace);
-
-  //P
-  dot(); dash(); dash(); dot();
-  delay(letterSpace);
-
-  //U
-  dot(); dot(); dash();
-  delay(letterSpace);
-  
-  //R
-  dot(); dash(); dot();
-  delay(letterSpace);
-
-}
-
-void onLedChange()
-{
-  digitalWrite(LED_BUILTIN,led);
- 
-}
-
-
-
-/*
-  Since Led is READ_WRITE variable, onLedChange() is
-  executed every time a new value is received from IoT Cloud.
-*/
-void onLedChange()  {
-  // Add your code here to act upon Led change
+  digitalWrite(ledPin, LOW);
+  delay(intraCharGap);
 }
